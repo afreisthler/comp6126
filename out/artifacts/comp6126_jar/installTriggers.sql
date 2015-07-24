@@ -20,3 +20,29 @@ create trigger admission_constraint before insert on admission
      end if;
      end
 ///
+
+Delimiter ///
+create trigger inpatient_ordered_treatment_constraint before insert on inpatient_ordered_treatment
+     for each row 
+     begin
+     declare msg varchar(255);
+     if (new.to_admission not in (select distinct admission_id from admission where admission.discharge_date is null))
+     then
+        set msg = 'inpatient_ordered_treatment_constraint violated: patient is not currently admitted';
+        signal sqlstate '45000' SET message_text = msg;
+     end if;
+     end
+///
+
+Delimiter ///
+create trigger outpatient_ordered_treatment_constraint before insert on outpatient_ordered_treatment
+     for each row 
+     begin
+     declare msg varchar(255);
+     if (new.to_outpatient_ordered_treatment_group not in (select distinct outpatient_ordered_treatment_group_id from outpatient_ordered_treatment_group where end_date is null))
+     then
+        set msg = 'outpatient_ordered_treatment_constraint violated: patient is not currently receiving outpatient services';
+        signal sqlstate '45000' SET message_text = msg;
+     end if;
+     end
+///
