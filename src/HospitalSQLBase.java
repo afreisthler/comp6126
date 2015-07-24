@@ -1,15 +1,39 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.Properties;
 
 public class HospitalSQLBase {
 
     protected static Connection getConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "magnolia", "magnolia");
+
+            String db_uri = "jdbc:mysql://localhost:3306/";
+            String db_name = "project";
+            String db_user = "magnolia";
+            String db_password = "magnolia";
+            try {
+                Properties prop = new Properties();
+                InputStream input = null;
+                input = new FileInputStream("config.properties");
+                prop.load(input);
+                db_uri = prop.getProperty("db_uri", "jdbc:mysql://localhost:3306/");
+                db_name = prop.getProperty("db_name", "project");
+                db_user = prop.getProperty("db_user", "magnolia");
+                db_password = prop.getProperty("db_password", "magnolia");
+            }  catch (FileNotFoundException e) {
+            }
+            return DriverManager.getConnection(db_uri + db_name, db_user, db_password);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
