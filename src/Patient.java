@@ -89,7 +89,8 @@ public class Patient extends HospitalSQLBase {
                        "       date(medical_employee_administering_ordered_treatment.date) as treatment_date " +
                        "from patient, admission, inpatient_ordered_treatment, ordered_treatment, treatment, " +
                        "     medical_employee_administering_ordered_treatment " +
-                       "where admission.admission_id = inpatient_ordered_treatment.to_admission " +
+                       "where admission.to_patient = patient.patient_id " +
+                       "and admission.admission_id = inpatient_ordered_treatment.to_admission " +
                        "and inpatient_ordered_treatment.to_ordered_treatment = ordered_treatment.ordered_treatment_id " +
                        "and ordered_treatment.to_treatment = treatment.treatment_id " +
                        "and medical_employee_administering_ordered_treatment.to_ordered_treatment = ordered_treatment.ordered_treatment_id " +
@@ -188,9 +189,10 @@ public class Patient extends HospitalSQLBase {
     }
 
     public static String getPatientsWhoHaveBeenAdmitted() {
-        String query = "select patient_id, first_name, last_name " +
+        String query = "select distinct patient_id, first_name, last_name " +
                 "from patient, admission " +
-                "where admission.to_patient = patient.patient_id ";
+                "where admission.to_patient = patient.patient_id " +
+                "order by patient_id";
         return queryToResults(query);
     }
 
