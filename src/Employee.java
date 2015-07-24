@@ -600,7 +600,6 @@ public class Employee extends HospitalSQLBase {
                 Statement statement = connection.createStatement();
                 statement.executeUpdate("insert into ordered_treatment(to_treatment, to_ordering_doctor, ordered_date) values('" + treatment_id + "','" + doctor_id + "', now())");
 
-                // todo: trigger that admission is not discharged
                 // todo: trigger that admitting doctor is primary or assigned
                 statement.executeUpdate("insert into inpatient_ordered_treatment values(last_insert_id(), " + admission_id +")");
                 return "Success!\n";
@@ -616,8 +615,6 @@ public class Employee extends HospitalSQLBase {
                 Connection connection = getConnection();
                 Statement statement = connection.createStatement();
                 statement.executeUpdate("insert into ordered_treatment(to_treatment, to_ordering_doctor, ordered_date) values('" + treatment_id + "','" + doctor_id + "', now())");
-
-                // todo: trigger that otg is not ended
                 statement.executeUpdate("insert into outpatient_ordered_treatment values(last_insert_id(), " + og_id +")");
                 return "Success!\n";
             } catch (SQLException e) {
